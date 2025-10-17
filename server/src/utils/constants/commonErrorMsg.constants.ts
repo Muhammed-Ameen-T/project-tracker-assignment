@@ -1,0 +1,15 @@
+export const ErrorMsg = {
+  MISSING_FILE: 'File is missing in the request.',
+  INVALID_FILE_TYPE: 'Invalid file type provided.',
+  FILE_TOO_LARGE: 'File size exceeds the allowed limit.',
+  MISSING_REQUIRED_FIELDS: 'Required fields are missing in the request.',
+  ADHAAR_NOT_VALID: 'Aadhaar number is not valid.',
+  UID_MISMATCH: 'UID on the front and back of the Aadhaar card do not match.',
+  FAILED_TO_CLEAN: 'Failed to clean up uploaded files',
+  INVALID_AADHAAR_CONTENT: 'Uploaded images do not appear to be valid Aadhaar cards.',
+  FILE_SIZE_TOOLARGE: 'File size too large.',
+  FRONT_AND_BACK_REQUIRED: 'Both front and back images are required.',
+  ALLOWED_FILE_TYPE: 'Invalid file type. Only JPEG and PNG are allowed.',
+  BACK_IMG_REQUIRED: 'Aadhaar Back image is required',
+  FRONT_IMG_REQUIRED: 'Aadhaar Front image is required',
+};

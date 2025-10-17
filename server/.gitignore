@@ -1,0 +1,6 @@
+.env
+node_modules/
+dist/
+digital-hall-470617-g7-2db913f5cc12.json
+logging/
+.env.production

@@ -1,0 +1,44 @@
+/**
+ * @class CreateProjectDTO
+ * DTO for data flowing into the CreateProjectUseCase.
+ */
+export class CreateProjectDTO {
+    /** @type {string} */
+    name: string;
+    /** @type {string} */
+    description: string;
+
+    /**
+     * @param {string} name
+     * @param {string} description
+     */
+    constructor(name: string, description: string) {
+        this.name = name;
+        this.description = description;
+    }
+}
+
+/**
+ * @class ProjectResponseDTO
+ * DTO for data flowing out of Use Cases (response to the Controller).
+ */
+export class ProjectResponseDTO {
+    /** @type {string} */
+    id: string;
+    /** @type {string} */
+    name: string;
+    /** @type {string} */
+    description: string;
+    /** @type {Date} */
+    createdAt: Date;
+
+    /**
+     * @param {Object} data - Project data (IProjectData or IProjectDocument).
+     */
+    constructor(data: any) {
+        this.id = data._id?.toString() || data.id;
+        this.name = data.name;
+        this.description = data.description;
+        this.createdAt = data.createdAt;
+    }
+}
