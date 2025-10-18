@@ -48,12 +48,29 @@ export class TaskRepository extends BaseRepository<ITaskDocument, ITaskData> imp
    * @param {ObjectId} projectId
    * @param {string} title
    * @param {string} description
+   * @param {string} status
    * @returns {Promise<ITaskDocument>}
    */
-  async createTask(projectId: Types.ObjectId, title: string, description: string): Promise<ITaskDocument> {
-    // We bypass the generic create() to use the specific parameters required by the contract
-    const newTask = new this.model({ projectId, title, description });
+  async createTask(projectId: Types.ObjectId, title: string, description: string, status: string): Promise<ITaskDocument> {
+    const newTask = new this.model({ projectId, title, description, status });
     return newTask.save();
+  }
+
+  /**
+   * Edits a task.
+   * @param {ObjectId} projectId
+   * @param {string} title
+   * @param {string} description
+   * @param {string} status
+   * @returns {Promise<ITaskDocument>}
+   */
+  async editTask(taskId: string | ObjectId, title: string, description: string, status: string): Promise<ITaskDocument> {
+    const updatedTask = await this.model.findOneAndUpdate(
+      { _id: taskId },
+      { title, description, status },
+      { new: true }
+    );
+    return updatedTask!;
   }
 
   /**

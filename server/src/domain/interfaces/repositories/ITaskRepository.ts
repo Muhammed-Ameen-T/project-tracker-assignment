@@ -34,7 +34,7 @@ export interface ITaskRepository {
    * @param {string} description
    * @returns {Promise<ITaskDocument>}
    */
-  createTask(projectId: Types.ObjectId, title: string, description: string): Promise<ITaskDocument>;
+  createTask(projectId: Types.ObjectId, title: string, description: string, status: string): Promise<ITaskDocument>;
 
   /**
    * Updates the status of a specific task.
@@ -50,4 +50,11 @@ export interface ITaskRepository {
    * @returns {Promise<ITaskData | null>}
    */
   deleteTask(taskId: string | ObjectId): Promise<ITaskData | null>;
+
+  /**
+   * Edits a task by its ID.
+   * @param {string | ObjectId} taskId
+   * @returns {Promise<ITaskData | null>}
+   */
+  editTask(projectId: string | ObjectId, title: string, description: string, status: string): Promise<ITaskData | null>;
 }

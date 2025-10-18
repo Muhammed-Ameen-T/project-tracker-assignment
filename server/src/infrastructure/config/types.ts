@@ -9,9 +9,12 @@ const TYPES = {
     IGetProjectByIdUseCase: Symbol.for('IGetProjectByIdUseCase'),
     IGetAllProjectsUseCase: Symbol.for('IGetAllProjectsUseCase'),
     IDeleteProjectUseCase: Symbol.for('IDeleteProjectUseCase'),
+    IUpdateProjectUseCase: Symbol.for('IUpdateProjectUseCase'),
 
     // Task Use Case Interfaces (New)
     ICreateTaskUseCase: Symbol.for('ICreateTaskUseCase'),
+    IEditTaskUseCase: Symbol.for('IEditTaskUseCase'),
+    IDeleteTaskUseCase: Symbol.for('IDeleteTaskUseCase'),
     IGetTasksByProjectIdUseCase: Symbol.for('IGetTasksByProjectIdUseCase'),
     IUpdateTaskStatusUseCase: Symbol.for('IUpdateTaskStatusUseCase'),
     

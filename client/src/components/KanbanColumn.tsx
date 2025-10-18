@@ -11,6 +11,7 @@ interface KanbanColumnProps {
   onAddTask: (status: TaskStatus) => void;
   onEditTask: (task: Task) => void;
   onDeleteTask: (id: string) => void;
+  onAIQA: (task: Task) => void;
 }
 
 const statusColors: Record<TaskStatus, string> = {
@@ -25,6 +26,7 @@ export const KanbanColumn = ({
   onAddTask,
   onEditTask,
   onDeleteTask,
+  onAIQA, 
 }: KanbanColumnProps) => {
   return (
     <div className="flex flex-col bg-secondary rounded-lg p-4 min-w-[320px]">
@@ -63,6 +65,7 @@ export const KanbanColumn = ({
                 index={index}
                 onEdit={onEditTask}
                 onDelete={onDeleteTask}
+                onAIQA={onAIQA} 
               />
             ))}
             {provided.placeholder}

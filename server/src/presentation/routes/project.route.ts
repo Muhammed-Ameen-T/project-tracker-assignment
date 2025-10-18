@@ -10,18 +10,20 @@ const router = Router();
 const projectController = container.get<ProjectController>(TYPES.ProjectController);
 const taskController = container.get<TaskController>(TYPES.TaskController);
 
-// --- Project CRUD Routes ---
+// Project CRUD Routes 
 router.post('/', projectController.createProject);
 router.get('/', projectController.getAllProjects);
 router.get('/:projectId', projectController.getProjectById);
 router.delete('/:projectId', projectController.deleteProject);
+router.patch('/:projectId', projectController.updateProject);
 
-// --- Task Routes (Nested under Project) ---
+// Task Routes (Nested under Project) 
 router.post('/:projectId/tasks', taskController.createTask);
 router.get('/:projectId/tasks', taskController.getTasksByProjectId);
 
-// --- Task Status Update Route ---
+// Task Route 
 router.patch('/:projectId/tasks/:taskId/status', taskController.updateTaskStatus);
-
+router.patch('/:projectId/tasks/:taskId', taskController.editTask);
+router.delete('/:projectId/tasks/:taskId', taskController.deleteTask);
 
 export default router;

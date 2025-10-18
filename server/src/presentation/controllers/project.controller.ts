@@ -7,8 +7,8 @@ import { HttpResCode } from '../../utils/constants/httpResponseCode.utils';
 import { SuccessMsg } from '../../utils/constants/commonSuccessMsg.constants';
 import 'reflect-metadata';
 import { IProjectController } from '../../domain/interfaces/controller/projectMng.controller';
-import { ICreateProjectUseCase, IDeleteProjectUseCase, IGetAllProjectsUseCase, IGetProjectByIdUseCase } from '../../domain/interfaces/useCase/project.interface';
-import { CreateProjectDTO } from '../../application/dto/project.dto';
+import { ICreateProjectUseCase, IDeleteProjectUseCase, IGetAllProjectsUseCase, IGetProjectByIdUseCase, IUpdateProjectUseCase } from '../../domain/interfaces/useCase/project.interface';
+import { CreateProjectDTO, UpdateProjectDTO } from '../../application/dto/project.dto';
 import { AiService } from '../../infrastructure/services/ai.service';
 
 /**
@@ -23,6 +23,7 @@ export class ProjectController implements IProjectController {
   private getProjectByIdUseCase: IGetProjectByIdUseCase;
   private getAllProjectsUseCase: IGetAllProjectsUseCase;
   private deleteProjectUseCase: IDeleteProjectUseCase;
+  private updateProjectUseCase: IUpdateProjectUseCase;
   private aiService: AiService;
 
   /**
@@ -34,19 +35,21 @@ export class ProjectController implements IProjectController {
     @inject(TYPES.IGetProjectByIdUseCase) getProjectByIdUseCase: IGetProjectByIdUseCase,
     @inject(TYPES.IGetAllProjectsUseCase) getAllProjectsUseCase: IGetAllProjectsUseCase,
     @inject(TYPES.IDeleteProjectUseCase) deleteProjectUseCase: IDeleteProjectUseCase,
+    @inject(TYPES.IUpdateProjectUseCase) updateProjectUseCase: IUpdateProjectUseCase,
     @inject(TYPES.AiService) aiService: AiService,
   ) {
     this.createProjectUseCase = createProjectUseCase;
     this.getProjectByIdUseCase = getProjectByIdUseCase;
     this.getAllProjectsUseCase = getAllProjectsUseCase;
     this.deleteProjectUseCase = deleteProjectUseCase;
+    this.updateProjectUseCase = updateProjectUseCase;
     this.aiService = aiService;
     
-    // Bind methods to 'this' to prevent context loss when used as Express middleware
     this.createProject = this.createProject.bind(this);
     this.getAllProjects = this.getAllProjects.bind(this);
     this.getProjectById = this.getProjectById.bind(this);
     this.deleteProject = this.deleteProject.bind(this);
+    this.updateProject = this.updateProject.bind(this);
     this.getProjectSummary = this.getProjectSummary.bind(this);
   }
 
@@ -56,13 +59,34 @@ export class ProjectController implements IProjectController {
    */
   async createProject(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      // 1. Create DTO from request body
       const dto = new CreateProjectDTO(req.body.name, req.body.description);
       
-      // 2. Execute the single Use Case action
       const project = await this.createProjectUseCase.execute(dto);
       
       sendResponse(res, HttpResCode.CREATED, SuccessMsg.PROJECT_CREATED, project);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * @inheritDoc
+   * @route PATCH /api/projects/:projectId
+   */
+  async updateProject(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const projectId = req.params.projectId;
+      const { name, description } = req.body;
+      
+      if (!mongoose.Types.ObjectId.isValid(projectId)) {
+        return next(new Error('Invalid Project ID format.'));
+      }
+      
+      const dto = new UpdateProjectDTO(projectId, name, description);
+      
+      const updatedProject = await this.updateProjectUseCase.execute(dto);
+      
+      sendResponse(res, HttpResCode.OK, SuccessMsg.PROJECT_UPDATED, updatedProject);
     } catch (error) {
       next(error);
     }

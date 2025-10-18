@@ -7,6 +7,9 @@ import 'reflect-metadata';
 import { IDeleteProjectUseCase } from '../../domain/interfaces/useCase/project.interface';
 import { IProjectRepository } from '../../domain/interfaces/repositories/IProjectRepository';
 import { ProjectResponseDTO } from '../dto/project.dto';
+import { HttpResCode } from '../../utils/constants/httpResponseCode.utils';
+import { ErrorMsg } from '../../utils/constants/commonErrorMsg.constants';
+import { CustomError } from '../../utils/errors/custom.error';
 
 /**
  * @class DeleteProjectUseCase
@@ -38,18 +41,12 @@ export class DeleteProjectUseCase implements IDeleteProjectUseCase {
    * @throws {Error} If the project is not found.
    */
   async execute(projectId: string | ObjectId): Promise<ProjectResponseDTO> {
-    // 1. Repository Call (Deletion attempts to delete and returns the deleted object's data)
     const deletedProject = await this.projectRepository.delete(projectId);
 
-    // 2. Validation
     if (!deletedProject) {
-      throw new Error(`Project with ID ${projectId} not found for deletion.`);
+      throw new CustomError(ErrorMsg.PROJECT_WITH_ID_NOT_FOUND(projectId), HttpResCode.NOT_FOUND);
     }
 
-    // 3. Response DTO conversion
     return new ProjectResponseDTO(deletedProject);
-    
-    // NOTE: In a complete system, task deletion logic would be triggered here by 
-    // an injected TaskManagementService to maintain data integrity (Cascade Delete).
   }
 }

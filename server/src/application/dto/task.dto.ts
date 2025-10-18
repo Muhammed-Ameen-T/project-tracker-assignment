@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongoose';
+import { TaskStatus } from '../../domain/models/task.model';
 
 /**
  * @class CreateTaskDTO
@@ -11,16 +12,19 @@ export class CreateTaskDTO {
     title: string;
     /** @type {string} */
     description: string;
+    /** @type {string} */
+    status: string;
 
     /**
      * @param {string | ObjectId} projectId
      * @param {string} title
      * @param {string} description
      */
-    constructor(projectId: string | ObjectId, title: string, description: string) {
+    constructor(projectId: string | ObjectId, title: string, description: string, status: string) {
         this.projectId = projectId;
         this.title = title;
         this.description = description;
+        this.status = status;
     }
 }
 
@@ -68,7 +72,50 @@ export class TaskResponseDTO {
         this.title = data.title;
         this.description = data.description;
         this.status = data.status;
-        // Ensure projectId is cast to string for the response contract
         this.projectId = data.projectId.toString(); 
+    }
+}
+
+/**
+ * @class EditTaskDTO
+ * DTO for data flowing into the IEditTaskUseCase.
+ */
+export class EditTaskDTO {
+    /** @type {string | ObjectId} */
+    taskId: string | ObjectId;
+    /** @type {string} */
+    title: string;
+    /** @type {string} */
+    description: string;
+    /** @type {TaskStatus} */
+    status: TaskStatus;
+
+    /**
+     * @param {string | ObjectId} taskId
+     * @param {string} title
+     * @param {string} description
+     * @param {TaskStatus} status
+     */
+    constructor(taskId: string | ObjectId, title: string, description: string, status: TaskStatus) {
+        this.taskId = taskId;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+    }
+}
+
+/**
+ * @class DeleteTaskDTO
+ * DTO for data flowing into the IDeleteTaskUseCase.
+ */
+export class DeleteTaskDTO {
+    /** @type {string | ObjectId} */
+    taskId: string | ObjectId;
+
+    /**
+     * @param {string | ObjectId} taskId
+     */
+    constructor(taskId: string | ObjectId) {
+        this.taskId = taskId;
     }
 }

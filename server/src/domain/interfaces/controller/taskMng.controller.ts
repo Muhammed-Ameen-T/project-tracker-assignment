@@ -6,6 +6,8 @@ import { Request, Response, NextFunction } from 'express';
  */
 export interface ITaskController {
   createTask(req: Request, res: Response, next: NextFunction): Promise<void>;
+  editTask(req: Request, res: Response, next: NextFunction): Promise<void>;
+  deleteTask(req: Request, res: Response, next: NextFunction): Promise<void>;
   getTasksByProjectId(req: Request, res: Response, next: NextFunction): Promise<void>;
   updateTaskStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
   getTaskQnA(req: Request, res: Response, next: NextFunction): Promise<void>;

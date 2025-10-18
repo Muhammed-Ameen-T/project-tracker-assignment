@@ -7,6 +7,9 @@ import 'reflect-metadata';
 import { IGetProjectByIdUseCase } from '../../domain/interfaces/useCase/project.interface';
 import { IProjectRepository } from '../../domain/interfaces/repositories/IProjectRepository';
 import { ProjectResponseDTO } from '../dto/project.dto';
+import { CustomError } from '../../utils/errors/custom.error';
+import { ErrorMsg } from '../../utils/constants/commonErrorMsg.constants';
+import { HttpResCode } from '../../utils/constants/httpResponseCode.utils';
 
 /**
  * @class GetProjectByIdUseCase
@@ -37,7 +40,7 @@ export class GetProjectByIdUseCase implements IGetProjectByIdUseCase {
     const project = await this.projectRepository.findById(projectId);
     
     if (!project) {
-      throw new Error(`Project with ID ${projectId} not found.`);
+      throw new CustomError(ErrorMsg.PROJECT_WITH_ID_NOT_FOUND(projectId), HttpResCode.NOT_FOUND);
     }
 
     return new ProjectResponseDTO(project);

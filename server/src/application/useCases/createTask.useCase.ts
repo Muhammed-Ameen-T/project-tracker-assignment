@@ -6,6 +6,9 @@ import { ICreateTaskUseCase } from '../../domain/interfaces/useCase/task.interfa
 import { IProjectRepository } from '../../domain/interfaces/repositories/IProjectRepository';
 import { ITaskRepository } from '../../domain/interfaces/repositories/ITaskRepository';
 import { CreateTaskDTO, TaskResponseDTO } from '../dto/task.dto';
+import { CustomError } from '../../utils/errors/custom.error';
+import { HttpResCode } from '../../utils/constants/httpResponseCode.utils';
+import { ErrorMsg } from '../../utils/constants/commonErrorMsg.constants';
 
 /**
  * @class CreateTaskUseCase
@@ -37,27 +40,25 @@ export class CreateTaskUseCase implements ICreateTaskUseCase {
    * @throws {Error} If validation fails or project is not found.
    */
   async execute(dto: CreateTaskDTO): Promise<TaskResponseDTO> {
-    // 1. Validation
     if (!dto.title || dto.title.trim().length === 0) {
-      throw new Error('Task title is required.');
+      throw new CustomError(ErrorMsg.TASK_TITLE_REQUIRED, HttpResCode.BAD_REQUEST);
     }
     if (!dto.description || dto.description.trim().length === 0) {
-      throw new Error('Task description is required.');
+      throw new CustomError(ErrorMsg.TASK_DESCRIPTION_REQUIRED, HttpResCode.BAD_REQUEST);
     }
 
-    // 2. Business Logic: Check if the project exists (using injected repository contract)
     const project = await this.projectRepository.findById(dto.projectId);
     if (!project) {
-      throw new Error(`Project with ID ${dto.projectId} not found. Cannot create task.`);
+      throw new CustomError(ErrorMsg.PROJECT_WITH_ID_NOT_FOUND(dto.projectId), HttpResCode.NOT_FOUND);
     }
 
     const newTaskDocument = await this.taskRepository.createTask(
       new Types.ObjectId(dto.projectId.toString()),
       dto.title.trim(),
-      dto.description.trim()
+      dto.description.trim(),
+      dto.status.trim()
     );
 
-    // 4. Response DTO conversion
     return new TaskResponseDTO(newTaskDocument);
   }
 }

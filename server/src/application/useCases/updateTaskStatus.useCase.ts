@@ -1,19 +1,16 @@
 // src/application/useCases/UpdateTaskStatus.useCase.ts
 import { injectable, inject } from 'inversify';
-
 import 'reflect-metadata';
 import { TaskStatus } from '../../domain/models/task.model';
 import { IUpdateTaskStatusUseCase } from '../../domain/interfaces/useCase/task.interface';
 import { ITaskRepository } from '../../domain/interfaces/repositories/ITaskRepository';
 import { TaskResponseDTO, UpdateTaskStatusDTO } from '../dto/task.dto';
 import { TYPES } from '../../infrastructure/config/types';
+import { CustomError } from '../../utils/errors/custom.error';
+import { ErrorMsg } from '../../utils/constants/commonErrorMsg.constants';
+import { HttpResCode } from '../../utils/constants/httpResponseCode.utils';
+import { isValidTaskStatus } from '../../utils/helper/isValidStatus';
 
-/**
- * Validates if a string is a valid TaskStatus.
- */
-function isValidTaskStatus(status: string): status is TaskStatus {
-  return ['To Do', 'In Progress', 'Done'].includes(status);
-}
 
 /**
  * @class UpdateTaskStatusUseCase
@@ -41,19 +38,16 @@ export class UpdateTaskStatusUseCase implements IUpdateTaskStatusUseCase {
    * @throws {Error} If status is invalid or task is not found.
    */
   async execute(dto: UpdateTaskStatusDTO): Promise<TaskResponseDTO> {
-    // 1. Validation for status format
     if (!isValidTaskStatus(dto.status)) {
-      throw new Error(`Invalid status: ${dto.status}. Must be 'To Do', 'In Progress', or 'Done'.`);
+      throw new CustomError(ErrorMsg.INVALID_TASK_STATUS(dto.status), HttpResCode.BAD_REQUEST);
     }
 
-    // 2. Repository Call
     const updatedTask = await this.taskRepository.updateTaskStatus(dto.taskId, dto.status as TaskStatus);
 
     if (!updatedTask) {
-      throw new Error(`Task with ID ${dto.taskId} not found for status update.`);
+      throw new CustomError(ErrorMsg.TASK_WITH_ID_NOT_FOUND(dto.taskId), HttpResCode.NOT_FOUND);
     }
 
-    // 3. Response DTO conversion
     return new TaskResponseDTO(updatedTask);
   }
 }

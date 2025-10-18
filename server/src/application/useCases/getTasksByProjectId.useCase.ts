@@ -8,6 +8,9 @@ import { IGetTasksByProjectIdUseCase } from '../../domain/interfaces/useCase/tas
 import { ITaskRepository } from '../../domain/interfaces/repositories/ITaskRepository';
 import { IProjectRepository } from '../../domain/interfaces/repositories/IProjectRepository';
 import { TaskResponseDTO } from '../dto/task.dto';
+import { CustomError } from '../../utils/errors/custom.error';
+import { ErrorMsg } from '../../utils/constants/commonErrorMsg.constants';
+import { HttpResCode } from '../../utils/constants/httpResponseCode.utils';
 
 /**
  * @class GetTasksByProjectIdUseCase
@@ -39,13 +42,11 @@ export class GetTasksByProjectIdUseCase implements IGetTasksByProjectIdUseCase {
    * @throws {Error} If project is not found.
    */
   async execute(projectId: string | ObjectId): Promise<TaskResponseDTO[]> {
-    // 1. Business Logic: Ensure project exists
     const project = await this.projectRepository.findById(projectId);
     if (!project) {
-      throw new Error(`Project with ID ${projectId} not found.`);
+      throw new CustomError(ErrorMsg.PROJECT_WITH_ID_NOT_FOUND(projectId), HttpResCode.NOT_FOUND);
     }
 
-    // 2. Repository Call
     const tasks = await this.taskRepository.findTasksByProjectId(projectId);
 
     return tasks.map(t => new TaskResponseDTO(t));

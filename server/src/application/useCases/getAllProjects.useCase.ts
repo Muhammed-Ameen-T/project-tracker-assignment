@@ -37,7 +37,6 @@ export class GetAllProjectsUseCase implements IGetAllProjectsUseCase {
   async execute(): Promise<ProjectResponseDTO[]> {
     const projects = await this.projectRepository.findAll();
     
-    // Response DTO conversion (maps each plain data object to a DTO)
     return projects.map(p => new ProjectResponseDTO(p));
   }
 }

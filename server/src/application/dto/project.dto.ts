@@ -42,3 +42,27 @@ export class ProjectResponseDTO {
         this.createdAt = data.createdAt;
     }
 }
+
+/**
+ * @class UpdateProjectDTO
+ * DTO for data flowing into the IUpdateProjectUseCase.
+ */
+export class UpdateProjectDTO {
+    /** @type {string | ObjectId} */
+    projectId: string;
+    /** @type {string} */
+    name: string;
+    /** @type {string} */
+    description: string;
+
+    /**
+     * @param {string} projectId
+     * @param {string} name
+     * @param {string} description
+     */
+    constructor(projectId: string, name: string, description: string) {
+        this.projectId = projectId;
+        this.name = name;
+        this.description = description;
+    }
+}

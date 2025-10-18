@@ -1,6 +1,6 @@
 // src/domain/interfaces/useCases/project.interface.ts
 import { ObjectId } from 'mongoose';
-import { CreateProjectDTO, ProjectResponseDTO } from '../../../application/dto/project.dto';
+import { CreateProjectDTO, ProjectResponseDTO, UpdateProjectDTO } from '../../../application/dto/project.dto';
 
 /**
  * @interface ICreateProjectUseCase
@@ -12,6 +12,18 @@ export interface ICreateProjectUseCase {
    * @returns {Promise<ProjectResponseDTO>}
    */
   execute(dto: CreateProjectDTO): Promise<ProjectResponseDTO>;
+}
+
+/**
+ * @interface IUpdateProjectUseCase
+ * Contract for updating the name and description of an existing project.
+ */
+export interface IUpdateProjectUseCase {
+  /**
+   * @param {UpdateProjectDTO} dto
+   * @returns {Promise<ProjectResponseDTO>} The updated project's data.
+   */
+  execute(dto: UpdateProjectDTO): Promise<ProjectResponseDTO>;
 }
 
 /**

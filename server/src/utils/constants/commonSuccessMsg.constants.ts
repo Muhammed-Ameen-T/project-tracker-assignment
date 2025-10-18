@@ -9,4 +9,5 @@ export const SuccessMsg = {
   PROJECT_DELETED: 'Project deleted successfully',
   QNA_GENERATED: 'Q&A generated successfully',
   SUMMARY_GENERATED: 'Summary generated successfully',
+  PROJECT_UPDATED: 'Project updated successfully',
 };

@@ -6,17 +6,20 @@ import { IProjectRepository } from '../../domain/interfaces/repositories/IProjec
 import { CreateProjectUseCase } from '../../application/useCases/createProject.useCase';
 import { GetProjectByIdUseCase } from '../../application/useCases/getProjectById.useCase';
 import { GetAllProjectsUseCase } from '../../application/useCases/getAllProjects.useCase';
-import { ICreateProjectUseCase, IDeleteProjectUseCase, IGetAllProjectsUseCase, IGetProjectByIdUseCase } from '../../domain/interfaces/useCase/project.interface';
+import { ICreateProjectUseCase, IDeleteProjectUseCase, IGetAllProjectsUseCase, IGetProjectByIdUseCase, IUpdateProjectUseCase } from '../../domain/interfaces/useCase/project.interface';
 import { ITaskRepository } from '../../domain/interfaces/repositories/ITaskRepository';
 import { GetTasksByProjectIdUseCase } from '../../application/useCases/getTasksByProjectId.useCase';
 import { UpdateTaskStatusUseCase } from '../../application/useCases/updateTaskStatus.useCase';
 import { CreateTaskUseCase } from '../../application/useCases/createTask.useCase';
-import { ICreateTaskUseCase, IGetTasksByProjectIdUseCase, IUpdateTaskStatusUseCase } from '../../domain/interfaces/useCase/task.interface';
+import { ICreateTaskUseCase, IDeleteTaskUseCase, IEditTaskUseCase, IGetTasksByProjectIdUseCase, IUpdateTaskStatusUseCase } from '../../domain/interfaces/useCase/task.interface';
 import { ProjectController } from '../../presentation/controllers/project.controller';
 import { AiService } from '../services/ai.service';
-import { TaskRepository } from '../repositories/tast.repository';
+import { TaskRepository } from '../repositories/task.repository';
 import { TaskController } from '../../presentation/controllers/task.controller';
 import { DeleteProjectUseCase } from '../../application/useCases/deleteProject.useCase';
+import { UpdateProjectUseCase } from '../../application/useCases/updateProject.useCase';
+import { DeleteTaskUseCase } from '../../application/useCases/deleteTask.useCase';
+import { EditTaskUseCase } from '../../application/useCases/editTask.useCase';
 
 const container = new Container();
 
@@ -39,8 +42,11 @@ container.bind<ICreateProjectUseCase>(TYPES.ICreateProjectUseCase).to(CreateProj
 container.bind<IGetProjectByIdUseCase>(TYPES.IGetProjectByIdUseCase).to(GetProjectByIdUseCase);
 container.bind<IGetAllProjectsUseCase>(TYPES.IGetAllProjectsUseCase).to(GetAllProjectsUseCase);
 container.bind<IDeleteProjectUseCase>(TYPES.IDeleteProjectUseCase).to(DeleteProjectUseCase);
+container.bind<IUpdateProjectUseCase>(TYPES.IUpdateProjectUseCase).to(UpdateProjectUseCase);
 
 container.bind<ICreateTaskUseCase>(TYPES.ICreateTaskUseCase).to(CreateTaskUseCase); 
+container.bind<IEditTaskUseCase>(TYPES.IEditTaskUseCase).to(EditTaskUseCase); 
+container.bind<IDeleteTaskUseCase>(TYPES.IDeleteTaskUseCase).to(DeleteTaskUseCase); 
 container.bind<IGetTasksByProjectIdUseCase>(TYPES.IGetTasksByProjectIdUseCase).to(GetTasksByProjectIdUseCase); 
 container.bind<IUpdateTaskStatusUseCase>(TYPES.IUpdateTaskStatusUseCase).to(UpdateTaskStatusUseCase); 
 container.bind(TYPES.AiService).to(AiService);

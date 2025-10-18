@@ -1,7 +1,7 @@
 import { Task } from '@/types';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Edit, Trash2, GripVertical } from 'lucide-react';
+import { Edit, Trash2, GripVertical, MessageSquare } from 'lucide-react'; 
 import { Draggable } from 'react-beautiful-dnd';
 
 interface TaskCardProps {
@@ -9,9 +9,10 @@ interface TaskCardProps {
   index: number;
   onEdit: (task: Task) => void;
   onDelete: (id: string) => void;
+  onAIQA: (task: Task) => void; 
 }
 
-export const TaskCard = ({ task, index, onEdit, onDelete }: TaskCardProps) => {
+export const TaskCard = ({ task, index, onEdit, onDelete, onAIQA }: TaskCardProps) => {
   return (
     <Draggable draggableId={task.id} index={index}>
       {(provided, snapshot) => (
@@ -38,7 +39,20 @@ export const TaskCard = ({ task, index, onEdit, onDelete }: TaskCardProps) => {
                 {task.description}
               </p>
               
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap"> 
+                
+                {/* AI Q&A Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onAIQA(task)}
+                  className="h-8 px-2 text-accent border-accent/50 hover:bg-accent/10 hover:text-accent"
+                >
+                  <MessageSquare className="h-3 w-3 mr-1" />
+                  Ask AI
+                </Button>
+
+                {/* Edit Button */}
                 <Button
                   variant="ghost"
                   size="sm"
@@ -48,6 +62,8 @@ export const TaskCard = ({ task, index, onEdit, onDelete }: TaskCardProps) => {
                   <Edit className="h-3 w-3 mr-1" />
                   Edit
                 </Button>
+
+                {/* Delete Button */}
                 <Button
                   variant="ghost"
                   size="sm"
