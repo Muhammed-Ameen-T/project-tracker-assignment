@@ -30,6 +30,12 @@ mern-project-tracker/
 
 ## 🖥️ Client Setup (Vite + React)
 
+Create a `.env` file inside the `client/` folder:
+
+```bash
+VITE_PUBLIC_API_BASE_URL=http://localhost:3000
+```
+
 ```bash
 cd client
 npm install
@@ -51,6 +57,7 @@ Create a `.env` file inside the `server/` folder:
 
 ```bash
 PORT=3000
+NODE_ENV=development
 MONGO_URI=mongodb://localhost:27017/taskmng
 GEMINI_API_KEY=your_gemini_api_key
 CLIENT_ORIGIN=http://localhost:8080
