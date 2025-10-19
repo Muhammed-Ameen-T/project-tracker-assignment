@@ -1,10 +1,11 @@
-// src/application/services/AiService.ts
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../infrastructure/config/types';
 import 'reflect-metadata';
 import { ITaskRepository } from '../../domain/interfaces/repositories/ITaskRepository';
 import { CustomError } from '../../utils/errors/custom.error';
 import { env } from '../config/env.config';
+import { HttpResCode } from '../../utils/constants/httpResponseCode.utils';
+import { ErrorMsg } from '../../utils/constants/commonErrorMsg.constants';
 
 /**
  * Initializes and returns the Gemini AI client using the dynamic import pattern.
@@ -69,7 +70,6 @@ export class AiService {
    */
   async getProjectSummary(projectId: string): Promise<string> {
     const ai = await this.getClient();
-    // Use the repository interface to fetch data (DIP)
     const tasks = await this.taskRepository.findTasksByProjectId(projectId);
 
     if (tasks.length === 0) {
@@ -111,11 +111,10 @@ export class AiService {
    */
   async getTaskQnA(taskId: string, question: string): Promise<string> {
     const ai = await this.getClient();
-    // Use the repository interface to fetch data (DIP)
     const task = await this.taskRepository.findTaskById(taskId);
 
     if (!task) {
-      throw new Error('Task not found.');
+      throw new CustomError(ErrorMsg.TASK_NOT_FOUND, HttpResCode.NOT_FOUND);
     }
 
     const systemContext = `
@@ -136,7 +135,7 @@ export class AiService {
       return response.text;
     } catch (error) {
       console.error('Gemini AI Q&A Error:', error);
-      throw new  CustomError('Failed to get answer from AI.');
+      throw new  CustomError(ErrorMsg.FAILED_TO_GET_AI_ANSWER, HttpResCode.INTERNAL_SERVER_ERROR);
     }
   }
 }

@@ -18,6 +18,11 @@ export const ErrorMsg = {
   PROJECT_DESCRIPTION_REQUIRED: 'Project description is required for update.',
   TASK_TITLE_REQUIRED: 'Task title is required.',
   TASK_DESCRIPTION_REQUIRED: 'Task description is required.',
+  INVALID_PROJECT_ID: 'Invalid Project ID format.',
+  INVALID_TASK_ID: 'Invalid Task ID format.',
+  INVALID_QUESTION: 'A valid question must be provided.',
+  TASK_NOT_FOUND: 'Task not found.',
+  FAILED_TO_GET_AI_ANSWER: 'Failed to get answer from AI.',
 
 
   TASK_WITH_ID_NOT_FOUND: (taskId: string | ObjectId) => `Task with ID ${taskId} not found.`,

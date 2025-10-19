@@ -17,6 +17,8 @@ const TYPES = {
     IDeleteTaskUseCase: Symbol.for('IDeleteTaskUseCase'),
     IGetTasksByProjectIdUseCase: Symbol.for('IGetTasksByProjectIdUseCase'),
     IUpdateTaskStatusUseCase: Symbol.for('IUpdateTaskStatusUseCase'),
+    IAISummaryUseCase: Symbol.for('IAISummaryUseCase'),
+    IAIQnAUseCase: Symbol.for('IAIQnAUseCase'),
     
     // Concrete Use Cases
     CreateProjectUseCase: Symbol.for('CreateProjectUseCaseImpl'),

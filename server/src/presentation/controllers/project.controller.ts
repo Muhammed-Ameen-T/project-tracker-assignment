@@ -9,7 +9,8 @@ import 'reflect-metadata';
 import { IProjectController } from '../../domain/interfaces/controller/projectMng.controller';
 import { ICreateProjectUseCase, IDeleteProjectUseCase, IGetAllProjectsUseCase, IGetProjectByIdUseCase, IUpdateProjectUseCase } from '../../domain/interfaces/useCase/project.interface';
 import { CreateProjectDTO, UpdateProjectDTO } from '../../application/dto/project.dto';
-import { AiService } from '../../infrastructure/services/ai.service';
+import { ErrorMsg } from '../../utils/constants/commonErrorMsg.constants';
+import { IAISummaryUseCase } from '../../domain/interfaces/useCase/ai.interface';
 
 /**
  * @class ProjectController
@@ -24,7 +25,7 @@ export class ProjectController implements IProjectController {
   private getAllProjectsUseCase: IGetAllProjectsUseCase;
   private deleteProjectUseCase: IDeleteProjectUseCase;
   private updateProjectUseCase: IUpdateProjectUseCase;
-  private aiService: AiService;
+  private getProjectSummaryUseCase: IAISummaryUseCase; 
 
   /**
    * @constructor
@@ -36,14 +37,14 @@ export class ProjectController implements IProjectController {
     @inject(TYPES.IGetAllProjectsUseCase) getAllProjectsUseCase: IGetAllProjectsUseCase,
     @inject(TYPES.IDeleteProjectUseCase) deleteProjectUseCase: IDeleteProjectUseCase,
     @inject(TYPES.IUpdateProjectUseCase) updateProjectUseCase: IUpdateProjectUseCase,
-    @inject(TYPES.AiService) aiService: AiService,
+    @inject(TYPES.IAISummaryUseCase) getProjectSummaryUseCase: IAISummaryUseCase, 
   ) {
     this.createProjectUseCase = createProjectUseCase;
     this.getProjectByIdUseCase = getProjectByIdUseCase;
     this.getAllProjectsUseCase = getAllProjectsUseCase;
     this.deleteProjectUseCase = deleteProjectUseCase;
     this.updateProjectUseCase = updateProjectUseCase;
-    this.aiService = aiService;
+    this.getProjectSummaryUseCase = getProjectSummaryUseCase; 
     
     this.createProject = this.createProject.bind(this);
     this.getAllProjects = this.getAllProjects.bind(this);
@@ -79,7 +80,7 @@ export class ProjectController implements IProjectController {
       const { name, description } = req.body;
       
       if (!mongoose.Types.ObjectId.isValid(projectId)) {
-        return next(new Error('Invalid Project ID format.'));
+        return next(new Error(ErrorMsg.INVALID_PROJECT_ID));
       }
       
       const dto = new UpdateProjectDTO(projectId, name, description);
@@ -113,7 +114,7 @@ export class ProjectController implements IProjectController {
     try {
       const projectId = req.params.projectId;
       if (!mongoose.Types.ObjectId.isValid(projectId)) {
-        return next(new Error('Invalid Project ID format.'));
+        return next(new Error(ErrorMsg.INVALID_PROJECT_ID));
       }
       
       const project = await this.getProjectByIdUseCase.execute(projectId);
@@ -132,7 +133,7 @@ export class ProjectController implements IProjectController {
     try {
       const projectId = req.params.projectId;
       if (!mongoose.Types.ObjectId.isValid(projectId)) {
-        return next(new Error('Invalid Project ID format.'));
+        return next(new Error(ErrorMsg.INVALID_PROJECT_ID));
       }
       
       const deletedProject = await this.deleteProjectUseCase.execute(projectId);
@@ -151,13 +152,11 @@ export class ProjectController implements IProjectController {
     try {
       const projectId = req.params.projectId;
       if (!mongoose.Types.ObjectId.isValid(projectId)) {
-        return next(new Error('Invalid Project ID format.'));
+        return next(new Error(ErrorMsg.INVALID_PROJECT_ID));
       }
       
-      await this.getProjectByIdUseCase.execute(projectId); 
+      const { summary } = await this.getProjectSummaryUseCase.execute(projectId);
 
-      const summary = await this.aiService.getProjectSummary(projectId);
-      
       sendResponse(res, HttpResCode.OK, SuccessMsg.SUMMARY_GENERATED, { summary });
     } catch (error) {
       next(error);

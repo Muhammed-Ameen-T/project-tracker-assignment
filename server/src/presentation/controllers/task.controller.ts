@@ -9,7 +9,8 @@ import 'reflect-metadata';
 import { ITaskController } from '../../domain/interfaces/controller/taskMng.controller';
 import { ICreateTaskUseCase, IDeleteTaskUseCase, IEditTaskUseCase, IGetTasksByProjectIdUseCase, IUpdateTaskStatusUseCase } from '../../domain/interfaces/useCase/task.interface';
 import { CreateTaskDTO, DeleteTaskDTO, EditTaskDTO, UpdateTaskStatusDTO } from '../../application/dto/task.dto';
-import { AiService } from '../../infrastructure/services/ai.service';
+import { ErrorMsg } from '../../utils/constants/commonErrorMsg.constants';
+import { IAIQnAUseCase } from '../../domain/interfaces/useCase/ai.interface';
 
 /**
  * @class TaskController
@@ -24,7 +25,7 @@ export class TaskController implements ITaskController {
   private deleteTaskUseCase: IDeleteTaskUseCase;
   private getTasksByProjectIdUseCase: IGetTasksByProjectIdUseCase;
   private updateTaskStatusUseCase: IUpdateTaskStatusUseCase;
-  private aiService: AiService;
+  private getTaskQnAUseCase: IAIQnAUseCase; 
 
   /**
    * @constructor
@@ -36,14 +37,14 @@ export class TaskController implements ITaskController {
     @inject(TYPES.IDeleteTaskUseCase) deleteTaskUseCase: IDeleteTaskUseCase,
     @inject(TYPES.IGetTasksByProjectIdUseCase) getTasksByProjectIdUseCase: IGetTasksByProjectIdUseCase,
     @inject(TYPES.IUpdateTaskStatusUseCase) updateTaskStatusUseCase: IUpdateTaskStatusUseCase,
-    @inject(TYPES.AiService) aiService: AiService,
+    @inject(TYPES.IAIQnAUseCase) getTaskQnAUseCase: IAIQnAUseCase, 
   ) {
     this.createTaskUseCase = createTaskUseCase;
     this.editTaskUseCase = editTaskUseCase;
     this.deleteTaskUseCase = deleteTaskUseCase;
     this.getTasksByProjectIdUseCase = getTasksByProjectIdUseCase;
     this.updateTaskStatusUseCase = updateTaskStatusUseCase;
-    this.aiService = aiService;
+    this.getTaskQnAUseCase = getTaskQnAUseCase; 
     
     this.createTask = this.createTask.bind(this);
     this.editTask = this.editTask.bind(this);
@@ -63,7 +64,7 @@ export class TaskController implements ITaskController {
       const { title, description, status } = req.body;
 
       if (!mongoose.Types.ObjectId.isValid(projectId)) {
-        return next(new Error('Invalid Project ID format.'));
+        return next(new Error(ErrorMsg.INVALID_PROJECT_ID));
       }
 
       const dto = new CreateTaskDTO(projectId, title, description, status);
@@ -86,7 +87,7 @@ export class TaskController implements ITaskController {
       const { title, description, status } = req.body;
 
       if (!mongoose.Types.ObjectId.isValid(taskId)) {
-        return next(new Error('Invalid Task ID format.'));
+        return next(new Error(ErrorMsg.INVALID_TASK_ID));
       }
 
       const dto = new EditTaskDTO(taskId, title, description, status);
@@ -107,7 +108,7 @@ export class TaskController implements ITaskController {
       const { taskId } = req.params;
 
       if (!mongoose.Types.ObjectId.isValid(taskId)) {
-        return next(new Error('Invalid Task ID format.'));
+        return next(new Error(ErrorMsg.INVALID_TASK_ID));
       }
 
       const dto = new DeleteTaskDTO(taskId);
@@ -127,7 +128,7 @@ export class TaskController implements ITaskController {
     try {
       const { projectId } = req.params;
       if (!mongoose.Types.ObjectId.isValid(projectId)) {
-        return next(new Error('Invalid Project ID format.'));
+        return next(new Error(ErrorMsg.INVALID_PROJECT_ID));
       }
       
       const tasks = await this.getTasksByProjectIdUseCase.execute(projectId);
@@ -148,10 +149,7 @@ export class TaskController implements ITaskController {
       const { status } = req.body;
 
       if (!mongoose.Types.ObjectId.isValid(taskId)) {
-        return next(new Error('Invalid Task ID format.'));
-      }
-      if (typeof status !== 'string') {
-        return next(new Error('Task status must be provided as a string.'));
+        return next(new Error(ErrorMsg.INVALID_TASK_ID));
       }
       
       const dto = new UpdateTaskStatusDTO(taskId, status);
@@ -174,16 +172,15 @@ export class TaskController implements ITaskController {
       const { question } = req.body;
 
       if (!mongoose.Types.ObjectId.isValid(taskId)) {
-        return next(new Error('Invalid Task ID format.'));
+        return next(new Error(ErrorMsg.INVALID_TASK_ID));
       }
 
       if (!question || typeof question !== 'string') {
-        return next(new Error('A "question" string is required in the body.'));
+        return next(new Error(ErrorMsg.INVALID_QUESTION));
       }
-      
-      const answer = await this.aiService.getTaskQnA(taskId, question);
-      
-      sendResponse(res, HttpResCode.OK, SuccessMsg.QNA_GENERATED, { question, answer });
+
+      const result = await this.getTaskQnAUseCase.execute(taskId, question);
+      sendResponse(res, HttpResCode.OK, SuccessMsg.QNA_GENERATED, { question, answer: result.answer });
     } catch (error) {
       next(error);
     }

@@ -20,6 +20,9 @@ import { DeleteProjectUseCase } from '../../application/useCases/deleteProject.u
 import { UpdateProjectUseCase } from '../../application/useCases/updateProject.useCase';
 import { DeleteTaskUseCase } from '../../application/useCases/deleteTask.useCase';
 import { EditTaskUseCase } from '../../application/useCases/editTask.useCase';
+import { GetProjectSummaryUseCase } from '../../application/useCases/GetProjectSummary.useCase';
+import { GetTaskQnAUseCase } from '../../application/useCases/GetTaskQnA.useCase';
+import { IAIQnAUseCase, IAISummaryUseCase } from '../../domain/interfaces/useCase/ai.interface';
 
 const container = new Container();
 
@@ -49,6 +52,8 @@ container.bind<IEditTaskUseCase>(TYPES.IEditTaskUseCase).to(EditTaskUseCase);
 container.bind<IDeleteTaskUseCase>(TYPES.IDeleteTaskUseCase).to(DeleteTaskUseCase); 
 container.bind<IGetTasksByProjectIdUseCase>(TYPES.IGetTasksByProjectIdUseCase).to(GetTasksByProjectIdUseCase); 
 container.bind<IUpdateTaskStatusUseCase>(TYPES.IUpdateTaskStatusUseCase).to(UpdateTaskStatusUseCase); 
+container.bind<IAISummaryUseCase>(TYPES.IAISummaryUseCase).to(GetProjectSummaryUseCase); 
+container.bind<IAIQnAUseCase>(TYPES.IAIQnAUseCase).to(GetTaskQnAUseCase); 
 container.bind(TYPES.AiService).to(AiService);
 
 

@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type TaskSavePayload = {
   id?: string;
@@ -49,6 +50,10 @@ export const TaskDialog = ({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState<TaskStatus>(defaultStatus);
+  const [validationError, setValidationError] = useState<{
+    title: string;
+    description: string;
+  }>({ title: "", description: "" });
 
   useEffect(() => {
     if (task) {
@@ -60,10 +65,32 @@ export const TaskDialog = ({
       setDescription("");
       setStatus(defaultStatus);
     }
+    setValidationError({ title: "", description: "" });
   }, [task, defaultStatus, open]);
+
+  const validate = (): boolean => {
+    let isValid = true;
+    const errors = { title: "", description: "" };
+
+    if (!title.trim()) {
+      errors.title = "Task Title is required.";
+      isValid = false;
+    }
+    if (!description.trim()) {
+      errors.description = "Description cannot be empty.";
+      isValid = false;
+    }
+
+    setValidationError(errors);
+    return isValid;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validate()) {
+      return;
+    }
 
     const taskData: TaskSavePayload = {
       id: task?.id,
@@ -84,31 +111,57 @@ export const TaskDialog = ({
           </DialogHeader>
 
           <div className="space-y-4 py-4">
+            {/* Title Field */}
             <div className="space-y-2">
               <Label htmlFor="title">Task Title</Label>
               <Input
                 id="title"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                  if (validationError.title)
+                    setValidationError((prev) => ({ ...prev, title: "" }));
+                }}
                 placeholder="Enter task title"
-                required
                 disabled={isSaving}
+                className={cn(validationError.title && "border-destructive")}
               />
+              {validationError.title && (
+                <p className="text-sm text-destructive">
+                  {validationError.title}
+                </p>
+              )}
             </div>
 
+            {/* Description Field */}
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e) => {
+                  setDescription(e.target.value);
+                  if (validationError.description)
+                    setValidationError((prev) => ({
+                      ...prev,
+                      description: "",
+                    }));
+                }}
                 placeholder="Enter task description"
                 rows={4}
-                required
                 disabled={isSaving}
+                className={cn(
+                  validationError.description && "border-destructive"
+                )}
               />
+              {validationError.description && (
+                <p className="text-sm text-destructive">
+                  {validationError.description}
+                </p>
+              )}
             </div>
 
+            {/* Status Field */}
             <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
               <Select
